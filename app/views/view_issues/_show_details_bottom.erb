@@ -68,5 +68,18 @@
       </div>
     <% end %>
   </div>
+  <div class="splitcontent">
+    <% if authorize_for('issues', 'reset_votes') %>
+      <div class="splitcontentleft">
+        <div class="myvote attribute">
+          <div class="label">Clear Votes:</div>
+          <div class="value">
+              <%= link_to('Clear', {:controller => 'vote_on_issues', :action => 'reset_votes', :issue_id => @issue }, remote: true, :title => 'Clear' ) %>             
+          </div>
+        </div>
+      </div>         
+    <% end %>
+
+  </div>
     
 <% end %>

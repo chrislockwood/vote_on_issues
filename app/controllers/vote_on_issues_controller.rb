@@ -24,7 +24,7 @@ class VoteOnIssuesController < ApplicationController
     end
     
     begin
-      @vote = VoteOnIssue.find_by!("issue_id = ? AND user_id = ?", params[:issue_id], User.current.id)
+      @vote = VoteOnIssue.find_by!("issue_id = ? And user_id = ?", params[:issue_id], User.current.id)
       if 0 != @iMyVote
         @vote.vote_val = @iMyVote
         @vote.save
@@ -54,5 +54,21 @@ class VoteOnIssuesController < ApplicationController
     @UpVotes = VoteOnIssue.getListOfUpVotersOnIssue(params[:issue_id])
     @DnVotes = VoteOnIssue.getListOfDnVotersOnIssue(params[:issue_id])
     # Auto loads /app/views/vote_on_issues/show_voters.js.erb
+  end
+
+  def reset_votes
+    votes = VoteOnIssue.where(issue_id: params[:issue_id])
+    begin
+      votes.each { |vote| vote.destroy }
+    rescue ActiveRecord::RecordNotFound
+      # Cannot delete record
+      Rails.logger.error "Cannot delete vote #{vote}: #{$!}"
+    end
+
+    @nVotesUp = 0
+    @nVotesDn = 0
+    @iMyVote = 0
+    
+    @issue = Issue.find(params[:issue_id])
   end
 end
