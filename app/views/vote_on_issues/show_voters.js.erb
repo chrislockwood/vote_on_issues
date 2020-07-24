@@ -1,11 +1,11 @@
 
 vote_on_issues.clearListOfVoters();
 
-<% @UpVotes.each do |vote| %>
+<% @up_votes.each do |vote| %>
     vote_on_issues.addToListOfVoters(<%= vote['vote_val'] %>, "<%= vote['user_login'] %>");
 <% end %>
 
-<% @DnVotes.each do |vote| %>
+<% @down_votes.each do |vote| %>
     vote_on_issues.addToListOfVoters(<%= vote['vote_val'] %>, "<%= vote['user_login'] %>");
 <% end %>
 

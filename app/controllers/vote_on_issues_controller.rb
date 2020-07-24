@@ -2,11 +2,12 @@ class VoteOnIssuesController < ApplicationController
   # respond_to :html, :js
   unloadable
 
-  #Authorize against global permissions defined in init.rb
-  # ?? does prevent everythin below admin?
-  # TODO - find out how this works
-  #before_filter :authorize_global
-  #before_filter :authorize
+  before_action :find_project_by_issue, :authorize, :only => [ :cast_vote, :show_voters, :reset_votes ]
+
+  def find_project_by_issue
+    @issue = Issue.find(params[:issue_id])
+    @project = @issue.project
+  end
   
   def index
     @project = Project.find(params[:project_id])
@@ -14,45 +15,62 @@ class VoteOnIssuesController < ApplicationController
   end
 
   def cast_vote
-    @iMyVote = 0;
+    @vote_value = 0;
     if 'vup' == params[:vote_val]
-      @iMyVote = 1
+      @vote_value = 1
     elsif 'vdn' == params[:vote_val]
-      @iMyVote = -1
-    elsif 'nil' == params[:vote_val]
-      @iMyVote = 0;
+      @vote_value = -1
     end
-    
+
+    old_vote_val = nil
     begin
       @vote = VoteOnIssue.find_by!("issue_id = ? And user_id = ?", params[:issue_id], User.current.id)
-      if 0 != @iMyVote
-        @vote.vote_val = @iMyVote
+      old_vote_val = @vote.vote_val
+      if 0 != @vote_value
+        @vote.vote_val = @vote_value
         @vote.save
       else
         @vote.destroy
       end
     rescue ActiveRecord::RecordNotFound
-      if 0 != @iMyVote
+      if 0 != @vote_value
         @vote = VoteOnIssue.new
         @vote.user_id  = User.current.id
         @vote.issue_id = params[:issue_id]
-        @vote.vote_val = @iMyVote
+        @vote.vote_val = @vote_value
         @vote.save
       end
     end
     
-    @nVotesUp = VoteOnIssue.getUpVoteCountOnIssue(params[:issue_id])
-    @nVotesDn = VoteOnIssue.getDnVoteCountOnIssue(params[:issue_id])
-
+    @up_vote_count = VoteOnIssue.getUpVoteCountOnIssue(params[:issue_id])
+    @down_vote_count = VoteOnIssue.getDnVoteCountOnIssue(params[:issue_id])
     @issue = Issue.find(params[:issue_id])
+    @issue.init_journal(User.current)
+
+    vote_text = case @vote_value
+                when 0
+                  'withdrawn'
+
+                when 1
+                  'up'
+
+                when -1
+                  'down'
+                end
+    @issue.current_journal.details << JournalDetail.new(:property => 'attr',
+                                                        :prop_key => 'vote',
+                                                        :old_value => old_vote_val,
+                                                        :value => vote_text )
+    
+    @issue.save
     
     # Auto loads /app/views/vote_on_issues/cast_vote.js.erb
   end
   
   def show_voters
     @issue = Issue.find(params[:issue_id])
-    @UpVotes = VoteOnIssue.getListOfUpVotersOnIssue(params[:issue_id])
-    @DnVotes = VoteOnIssue.getListOfDnVotersOnIssue(params[:issue_id])
+    @up_votes = VoteOnIssue.getListOfUpVotersOnIssue(params[:issue_id])
+    @down_votes = VoteOnIssue.getListOfDnVotersOnIssue(params[:issue_id])
     # Auto loads /app/views/vote_on_issues/show_voters.js.erb
   end
 
@@ -65,10 +83,15 @@ class VoteOnIssuesController < ApplicationController
       Rails.logger.error "Cannot delete vote #{vote}: #{$!}"
     end
 
-    @nVotesUp = 0
-    @nVotesDn = 0
-    @iMyVote = 0
+    @up_vote_count = 0
+    @down_vote_count = 0
+    @vote_value = 0
     
     @issue = Issue.find(params[:issue_id])
+    @issue.init_journal(User.current)
+    @issue.current_journal.details << JournalDetail.new(:property => 'attr',
+                                                        :prop_key => 'all_votes',
+                                                        :value => 'cleared')
+    @issue.save
   end
 end

@@ -24,4 +24,6 @@ en:
 
   field_sum_votes_up: "Votes Up"
   field_sum_votes_dn: "Votes Down"
-  
+
+  field_vote: "Vote"
+  field_all_votes: "All Votes"

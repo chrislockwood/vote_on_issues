@@ -1,7 +1,7 @@
 <% if @project.module_enabled?(:vote_on_issues) %>
 
   <div class="splitcontent">
-    <% if authorize_for('issues', 'view_votes') %>
+    <% if authorize_for('vote_on_issues', 'view_votes') %>
       <div class="splitcontentleft">
         <div class="vote attribute">
           <div class="label"><%= l(:view_issues_label_votes) %>:</div>
@@ -42,7 +42,7 @@
       </div>
     <% end %>
   
-    <% if authorize_for('issues', 'cast_vote') %>
+    <% if authorize_for('vote_on_issues', 'cast_vote') %>
       <div class="splitcontentleft">
         <div class="myvote attribute">
           <div class="label"><%= l(:view_issues_my_vote) %>:</div>
@@ -69,7 +69,7 @@
     <% end %>
   </div>
   <div class="splitcontent">
-    <% if authorize_for('issues', 'reset_votes') %>
+    <% if authorize_for('vote_on_issues', 'reset_votes') %>
       <div class="splitcontentleft">
         <div class="myvote attribute">
           <div class="label">Clear Votes:</div>
