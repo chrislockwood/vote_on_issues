@@ -5,7 +5,7 @@ class CreateVoteOnIssues < ActiveRecord::Migration[4.2]
       t.datetime :updated_at
       t.references :issue, index: true, foreign_key: true
       t.references :user, index: true, foreign_key: true
-      t.integer :vote_val
+      t.integer :vote_value
     end
     # add_index :vote_on_issues, [:issue_id, :user_id], unique: true
   end

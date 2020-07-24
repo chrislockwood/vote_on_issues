@@ -4,8 +4,8 @@ require_dependency 'query_column'
 
 # patch issue_query to allow columns for votes
 issue_query = (IssueQuery rescue Query)
-issue_query.add_available_column(VOI_QueryColumn.new(:sum_votes_up, :sortable => '(SELECT abs(sum(vote_val)) FROM vote_on_issues WHERE vote_val > 0 AND issue_id=issues.id )'))
-issue_query.add_available_column(VOI_QueryColumn.new(:sum_votes_dn, :sortable => '(SELECT abs(sum(vote_val)) FROM vote_on_issues WHERE vote_val < 0 AND issue_id=issues.id )'))
+issue_query.add_available_column(VOI_QueryColumn.new(:sum_votes_up, :sortable => '(SELECT abs(sum(vote_value)) FROM vote_on_issues WHERE vote_value > 0 AND issue_id=issues.id )'))
+issue_query.add_available_column(VOI_QueryColumn.new(:sum_votes_dn, :sortable => '(SELECT abs(sum(vote_value)) FROM vote_on_issues WHERE vote_value < 0 AND issue_id=issues.id )'))
 Issue.send(:include, VoteOnIssues::Patches::QueryPatch)
 
 

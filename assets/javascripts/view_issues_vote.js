@@ -25,11 +25,11 @@ var vote_on_issues = {
         var ListTbody = $('#vote_on_issues-issue-voters-list');
         ListTbody.html('');
     }
-    , addToListOfVoters : function(vote_val, sVoter) {
+    , addToListOfVoters : function(vote_value, sVoter) {
         $('#vote_on_issues-issue-voters-list').append(
             '<tr><td>'
-            +(vote_val > 0 ? this.sImgUp : this.sImgDn)
-            +'</td><td><span data-vote-val="'+vote_val+'">'
+            +(vote_value > 0 ? this.sImgUp : this.sImgDn)
+            +'</td><td><span data-vote-val="' + vote_value +'">'
             +sVoter
             +'</span></td></tr>'
         );

@@ -5,7 +5,7 @@ module VoteOnIssues
       
       def sum_votes_up(issue)
         if User.current.allowed_to?(:view_votes, nil, :global => true)
-          VoteOnIssue.where('vote_val > 0 AND issue_id=?', issue.id).sum('vote_val')
+          VoteOnIssue.where('vote_value > 0 AND issue_id=?', issue.id).sum('vote_value')
         else
           '-'
         end
@@ -13,7 +13,7 @@ module VoteOnIssues
 
       def sum_votes_dn(issue)
         if User.current.allowed_to?(:view_votes, nil, :global => true)
-          VoteOnIssue.where('vote_val < 0 AND issue_id=?', issue.id).sum('vote_val')
+          VoteOnIssue.where('vote_value < 0 AND issue_id=?', issue.id).sum('vote_value')
         else
           '-'
         end

@@ -2,11 +2,11 @@
 vote_on_issues.clearListOfVoters();
 
 <% @up_votes.each do |vote| %>
-    vote_on_issues.addToListOfVoters(<%= vote['vote_val'] %>, "<%= vote['user_login'] %>");
+    vote_on_issues.addToListOfVoters(<%= vote['vote_value'] %>, "<%= vote['user_login'] %>");
 <% end %>
 
 <% @down_votes.each do |vote| %>
-    vote_on_issues.addToListOfVoters(<%= vote['vote_val'] %>, "<%= vote['user_login'] %>");
+    vote_on_issues.addToListOfVoters(<%= vote['vote_value'] %>, "<%= vote['user_login'] %>");
 <% end %>
 
 vote_on_issues.showListOfVoters();

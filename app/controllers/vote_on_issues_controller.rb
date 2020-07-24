@@ -16,18 +16,18 @@ class VoteOnIssuesController < ApplicationController
 
   def cast_vote
     @vote_value = 0;
-    if 'vup' == params[:vote_val]
+    if 'vup' == params[:vote_value]
       @vote_value = 1
-    elsif 'vdn' == params[:vote_val]
+    elsif 'vdn' == params[:vote_value]
       @vote_value = -1
     end
 
-    old_vote_val = nil
+    old_vote_value = nil
     begin
       @vote = VoteOnIssue.find_by!("issue_id = ? And user_id = ?", params[:issue_id], User.current.id)
-      old_vote_val = @vote.vote_val
+      old_vote_value = @vote.vote_value
       if 0 != @vote_value
-        @vote.vote_val = @vote_value
+        @vote.vote_value = @vote_value
         @vote.save
       else
         @vote.destroy
@@ -37,30 +37,20 @@ class VoteOnIssuesController < ApplicationController
         @vote = VoteOnIssue.new
         @vote.user_id  = User.current.id
         @vote.issue_id = params[:issue_id]
-        @vote.vote_val = @vote_value
+        @vote.vote_value = @vote_value
         @vote.save
       end
     end
     
-    @up_vote_count = VoteOnIssue.getUpVoteCountOnIssue(params[:issue_id])
-    @down_vote_count = VoteOnIssue.getDnVoteCountOnIssue(params[:issue_id])
+    @up_vote_count = VoteOnIssue.up_vote_count_for_issue(params[:issue_id])
+    @down_vote_count = VoteOnIssue.down_vote_count_for_issue(params[:issue_id])
     @issue = Issue.find(params[:issue_id])
     @issue.init_journal(User.current)
 
-    vote_text = case @vote_value
-                when 0
-                  'withdrawn'
-
-                when 1
-                  'up'
-
-                when -1
-                  'down'
-                end
     @issue.current_journal.details << JournalDetail.new(:property => 'attr',
                                                         :prop_key => 'vote',
-                                                        :old_value => old_vote_val,
-                                                        :value => vote_text )
+                                                        :old_value => vote_value_text(old_vote_value),
+                                                        :value => vote_value_text(@vote_value))
     
     @issue.save
     
@@ -69,8 +59,8 @@ class VoteOnIssuesController < ApplicationController
   
   def show_voters
     @issue = Issue.find(params[:issue_id])
-    @up_votes = VoteOnIssue.getListOfUpVotersOnIssue(params[:issue_id])
-    @down_votes = VoteOnIssue.getListOfDnVotersOnIssue(params[:issue_id])
+    @up_votes = VoteOnIssue.list_of_up_voters_for_issue(params[:issue_id])
+    @down_votes = VoteOnIssue.list_of_down_voters_for_issue(params[:issue_id])
     # Auto loads /app/views/vote_on_issues/show_voters.js.erb
   end
 
@@ -93,5 +83,21 @@ class VoteOnIssuesController < ApplicationController
                                                         :prop_key => 'all_votes',
                                                         :value => 'cleared')
     @issue.save
+  end
+
+  def vote_value_text(v)
+    case v
+    when nil
+      nil
+      
+    when 0
+      'withdrawn'
+      
+    when 1
+      'up'
+      
+    when -1
+      'down'
+    end
   end
 end
