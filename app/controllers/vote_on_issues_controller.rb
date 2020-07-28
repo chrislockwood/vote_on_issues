@@ -48,9 +48,9 @@ class VoteOnIssuesController < ApplicationController
     @issue.init_journal(User.current)
 
     # Spam reduction
-    notify_journal = @issue.current_journal.notify
+    notify_journal = @issue.current_journal.notify?
     @issue.current_journal.notify = false
-    notify_issue = @issue.notify
+    notify_issue = @issue.notify?
     @issue.notify = false
     
     @issue.current_journal.details << JournalDetail.new(:property => 'attr',
