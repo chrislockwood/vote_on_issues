@@ -13,7 +13,7 @@
                 <span id="vote_on_issues_nVotesDn"></span><%= image_tag 'arrow-d-r-red.png', :class => 'vote_on_issues-icon-votes', :plugin => 'vote_on_issues' %>
             </div>
             
-            <% if authorize_for('vote_on_issues', 'view_voters') %>
+            <% if authorize_for('vote_on_issues', 'show_voters') %>
               <div class="vote_on_issues-issue-votes-nowrap">
                 <%= link_to(l(:view_issues_label_voters), {:controller => 'vote_on_issues', :action => 'show_voters', :issue_id => @issue }, remote: true, :id => "vote_on_issues-link-voters", :class => 'vote_on_issues-link-voters', :title => l(:view_issues_show_voters) ) %>
               </div>
