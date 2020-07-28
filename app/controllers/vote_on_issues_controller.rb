@@ -47,6 +47,12 @@ class VoteOnIssuesController < ApplicationController
     @issue = Issue.find(params[:issue_id])
     @issue.init_journal(User.current)
 
+    # Spam reduction
+    notify_journal = @issue.current_journal.notify
+    @issue.current_journal.notify = false
+    notify_issue = @issue.notify
+    @issue.notify = false
+    
     @issue.current_journal.details << JournalDetail.new(:property => 'attr',
                                                         :prop_key => 'vote',
                                                         :old_value => vote_value_text(old_vote_value),
@@ -54,6 +60,9 @@ class VoteOnIssuesController < ApplicationController
     
     @issue.save
     
+    @issue.current_journal.notify = notify_journal
+    @issue.notify = notify_issue
+
     # Auto loads /app/views/vote_on_issues/cast_vote.js.erb
   end
   
