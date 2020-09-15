@@ -39,7 +39,7 @@ Redmine::Plugin.register :vote_on_issues do
   #   }
 
   settings :default => {
-     'send_notifications' => false
+     'send_notifications' => nil
   }, :partial => 'settings/vote_on_issues'
   
 end
