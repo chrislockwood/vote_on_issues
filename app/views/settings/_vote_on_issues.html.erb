@@ -1,0 +1,5 @@
+<div class="box tabular">
+           <% p settings %>
+  <p><%= label_tag("settings[send_notifications]", 'Send Email Notifications') %>
+    <%= check_box_tag("settings[send_notifications]", @settings['send_notifications'], @settings['send_notifications'] == 'on' ) %></p>
+</div>

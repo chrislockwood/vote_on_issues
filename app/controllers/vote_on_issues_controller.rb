@@ -47,11 +47,13 @@ class VoteOnIssuesController < ApplicationController
     @issue = Issue.find(params[:issue_id])
     @issue.init_journal(User.current)
 
-    # Spam reduction
-    notify_journal = @issue.current_journal.notify?
-    @issue.current_journal.notify = false
-    notify_issue = @issue.notify?
-    @issue.notify = false
+    unless Setting.plugin_vote_on_issues['send_notifications'] == 'on'
+      # Spam reduction
+      notify_journal = @issue.current_journal.notify?
+      @issue.current_journal.notify = false
+      notify_issue = @issue.notify?
+      @issue.notify = false
+    end
     
     @issue.current_journal.details << JournalDetail.new(:property => 'attr',
                                                         :prop_key => 'vote',
@@ -60,8 +62,10 @@ class VoteOnIssuesController < ApplicationController
     
     @issue.save
     
-    @issue.current_journal.notify = notify_journal
-    @issue.notify = notify_issue
+    unless Setting.plugin_vote_on_issues['send_notifications'] == 'on'
+      @issue.current_journal.notify = notify_journal
+      @issue.notify = notify_issue
+    end
 
     # Auto loads /app/views/vote_on_issues/cast_vote.js.erb
   end

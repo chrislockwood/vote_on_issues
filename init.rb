@@ -37,6 +37,10 @@ Redmine::Plugin.register :vote_on_issues do
   #   :if =>  Proc.new {
   #     User.current.allowed_to?(:view_votes, nil, :global => true)
   #   }
+
+  settings :default => {
+     'send_notifications' => false
+  }, :partial => 'settings/vote_on_issues'
   
 end
 
