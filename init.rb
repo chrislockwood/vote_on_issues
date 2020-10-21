@@ -6,6 +6,9 @@ require_dependency 'query_column'
 issue_query = (IssueQuery rescue Query)
 issue_query.add_available_column(VOI_QueryColumn.new(:sum_votes_up, :sortable => '(SELECT abs(sum(vote_value)) FROM vote_on_issues WHERE vote_value > 0 AND issue_id=issues.id )'))
 issue_query.add_available_column(VOI_QueryColumn.new(:sum_votes_dn, :sortable => '(SELECT abs(sum(vote_value)) FROM vote_on_issues WHERE vote_value < 0 AND issue_id=issues.id )'))
+issue_query.add_available_column(VOI_QueryColumn.new(:my_vote, :sortable => lambda { "(SELECT vote_value FROM vote_on_issues WHERE issue_id=issues.id and user_id=#{User.current.id})" } ))
+
+
 Issue.send(:include, VoteOnIssues::Patches::QueryPatch)
 
 
