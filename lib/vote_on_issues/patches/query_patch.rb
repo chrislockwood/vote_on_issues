@@ -21,12 +21,12 @@ module VoteOnIssues
 
       def my_vote(issue)
         if User.current.allowed_to?(:view_votes, nil, :global => true)
-          v = VoteOnIssue.where('issue_id=? AND user_id=?', issue.id, User.current.id).first
-          if v.nil?
+          case VoteOnIssue.current_user_vote_for_issue(issue)
+          when 0
             '-'
-          elsif v.vote_value > 0
+          when 1
             'Up'
-          else
+          when -1
             'Down'
           end
         else

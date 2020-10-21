@@ -6,14 +6,13 @@ class VoteOnIssue < ActiveRecord::Base
   belongs_to :issue
   
   def self.current_user_vote_for_issue(issue)
-    iRet = 0
-    begin
-     @vote = VoteOnIssue.find_by!("issue_id = ? AND user_id = ?", issue.id, User.current.id)
-     iRet = @vote.vote_value
-    rescue ActiveRecord::RecordNotFound
-     iRet = 0
+    vote = VoteOnIssue.find_by("issue_id = ? AND user_id = ?", issue.id, User.current.id)
+    if vote
+      @vote = vote
+      vote.vote_value
+    else
+      0
     end
-    iRet
   end
   
   def self.up_vote_count_for_issue(issue_id)
