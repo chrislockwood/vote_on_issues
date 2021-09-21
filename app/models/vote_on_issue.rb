@@ -32,12 +32,12 @@ class VoteOnIssue < ActiveRecord::Base
     # joins users successfully, but still execs one query for each user 
       # where("issue_id = ? AND vote_value > 0", issue_id).joins(:user)
     # This does what I want, but I'd love to find out how to do this in rails...
-    find_by_sql( ["SELECT `vote_on_issues`.`vote_value` AS vote_value, concat(`users`.`firstname`, ' ', `users`.`lastname`) AS user_login FROM `vote_on_issues` LEFT JOIN `users` ON (`users`.`id` = `vote_on_issues`.`user_id`) WHERE (`issue_id` = ? AND `vote_value` > 0) ORDER BY user_login ASC", issue_id] )
+    find_by_sql( ["SELECT vote_on_issues.vote_value AS vote_value, concat(users.firstname, ' ', users.lastname) AS user_login FROM vote_on_issues LEFT JOIN users ON (users.id = vote_on_issues.user_id) WHERE (issue_id = ? AND vote_value > 0) ORDER BY user_login ASC", issue_id] )
   end
   
   def self.list_of_down_voters_for_issue(issue_id)
     # see list_of_up_voters_for_issue
-    find_by_sql( ["SELECT `vote_on_issues`.`vote_value` AS vote_value, concat(`users`.`firstname`, ' ', `users`.`lastname`) AS user_login FROM `vote_on_issues` LEFT JOIN `users` ON (`users`.`id` = `vote_on_issues`.`user_id`) WHERE (`issue_id` = ? AND `vote_value` < 0) ORDER BY user_login ASC", issue_id] )
+    find_by_sql( ["SELECT vote_on_issues.vote_value AS vote_value, concat(users.firstname, ' ', users.lastname) AS user_login FROM vote_on_issues LEFT JOIN users ON (users.id = vote_on_issues.user_id) WHERE (issue_id = ? AND vote_value < 0) ORDER BY user_login ASC", issue_id] )
   end
   
 end
